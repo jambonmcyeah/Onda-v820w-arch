@@ -1,0 +1,27 @@
+# Maintainer: jambonmcyeah@gmail.com
+
+pkgname=bytcr-rt5640-ucm-git
+pkgver=r62.dfee9ec
+pkgrel=1
+pkgdesc='UCM files for bytcr-rt5640 to get sound to work'
+arch=('any')
+url="https://github.com/plbossart/UCM"
+license=('custom')
+depends=('alsa-lib')
+makedepends=('git')
+source=("ucm::git://github.com/plbossart/UCM.git")
+sha512sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/ucm"
+  ( set -o pipefail
+  git describe --long 2>/dev/null | sed 's/\([^-]*-g\)/r\1/;s/-/./g' ||
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  )
+}
+
+package() {
+ cd "$srcdir/ucm"
+ mkdir -p $pkgdir/usr/share/alsa/ucm/bytcr-rt5640
+ install -Dm 644 ./bytcr-rt5640/* $pkgdir/usr/share/alsa/ucm/bytcr-rt5640
+}
